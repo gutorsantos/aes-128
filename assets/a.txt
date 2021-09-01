@@ -1,0 +1,11 @@
+INITIAL KEY         INITIAL MESSAGE
+a e i m             o c o c
+b f j n             s a s a
+c g k o             m c m c
+d h l p             a o a o
+
+
+ab 6f 6f ab
+82 c5 d4 76
+ab f2 6f fe
+6b c5 d7 c0 
