@@ -1,6 +1,7 @@
 #include "aes.h"
 #include "file.h"
 #include "encrypt.cpp"
+#include "decrypt.cpp"
 #include <iostream>
 
 using namespace std;
@@ -29,6 +30,12 @@ void normal_aes() {
 
     AES_Encrypt(message, key, rounds);
 
+
+    unsigned char keyD[KEYSIZE];
+    read_file("secret.key", keyD);
+    read_file("encrypted.in", message);
+    AES_Decrypt(message, keyD, rounds);
+
 }
 
 void ecb_aes() {
@@ -48,7 +55,7 @@ int main() {
 
     do {
         cout << "Choose an option:" << endl;
-        cout << "0 - Encrypt/Decrypt " << endl;
+        cout << "0 - Basic Encrypt/Decrypt " << endl;
         cout << "1 - ECB mode" << endl;
         cout << "2 - CTR mode" << endl;        
         cin >> opt;

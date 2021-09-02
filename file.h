@@ -20,4 +20,17 @@ void read_file(std::string filename, unsigned char * char_array) {
 
 }
 
+void write(std::string filename, unsigned char * char_array) {
+    std::ofstream file;
+    file.open(DIR + filename);
+    std::string str;
+
+    for(int i = 0; i < KEYSIZE; i++) {
+        str.push_back(char_array[i]);
+    }
+
+    file << str;
+    file.close();
+}
+
 #endif

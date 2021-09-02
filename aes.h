@@ -1,6 +1,8 @@
 #ifndef AES_H_
 #define AES_H_
 
+#include <cstring>
+
 #define KEYSIZE 16      // 128 bits => 16 bytes
 
 unsigned char s_box[KEYSIZE*16] = {
@@ -60,5 +62,95 @@ unsigned char rcon[256] = {
 	0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d
 };
 
+/** rot_word
+ * This function is responsible to vertically shift the
+ * column
+ *          example: ab      cd
+ *                   cd  =>  ef
+ *                   ef      01
+ *                   01      ab
+ */
+void rot_word(unsigned char * w) {
+    unsigned char tmp[KEYSIZE/4];
+    memcpy(tmp, w, sizeof(w));
 
+    for(int i = 0; i < KEYSIZE/4; i++) {
+        w[((i-1) % (KEYSIZE/4) + (KEYSIZE/4))%(KEYSIZE/4)] = tmp[i];
+    }
+}
+
+
+void expand_key(unsigned char * key, unsigned char * expanded_key, int size) {
+	for(int i = 0; i < KEYSIZE; i++) {
+		expanded_key[i] = key[i];
+	}
+
+	int bytes_written = KEYSIZE;
+	int rcon_count = 1;
+    unsigned char w_i_1[KEYSIZE/4];
+
+	while(bytes_written < size) {
+
+        for(int i = 0; i < KEYSIZE/4; i++) {
+            w_i_1[i] = expanded_key[i + bytes_written - 4];
+        }
+
+		if(bytes_written % KEYSIZE == 0) {
+			rot_word(w_i_1);
+
+			// Realize the sub bytes
+            for (int i = 0; i < KEYSIZE/4; i++) {
+				w_i_1[i] = s_box[w_i_1[i]];
+			}
+            
+            /** 
+             * Just the first byte of rcon will do effect on XOR,
+             * so we opperates XOR only between the first column element and
+             * these first byte of rcon. 
+             *                              example: 01 00 00 00 
+             *                                           XOR 
+             *                                       9f a8 51 3c
+             *                                       9e a8 51 3c
+             */
+            w_i_1[0] ^= rcon[rcon_count];
+            for(int i = 0; i < 4; i++) {
+            }
+
+            rcon_count++;
+		}
+
+        for (unsigned char c = 0; c < 4; c++) {
+			expanded_key[bytes_written] = expanded_key[bytes_written - 16] ^ w_i_1[c];
+			bytes_written++;
+		}
+	}
+}
+
+/**
+ * Galois Multiplication Algorithm
+ * The operation consists in the modular multiplication of two four-term 
+ * polynomials whose coefficients are elements of GF(2^8). 
+ * The result is a seven-term polynomial, which must be reduced to a four-byte word, 
+ * which is done by doing the multiplication modulo (x^4)+1.
+ */
+unsigned char galois_multiplication(unsigned char a, unsigned char b) {
+	unsigned char p = 0;
+	unsigned char h; // high bit set
+
+	for(int i = 0; i < 8; i++) {
+		if((b & 1) == 1) {
+			p ^= a;
+		}
+
+		h = (a & 0x80);
+		a <<= 1;
+
+		if(h == 0x80)  {
+			a ^= 0x1b;		
+		}
+
+		b >>= 1;
+	}
+	return p;
+}
 #endif

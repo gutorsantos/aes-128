@@ -4,8 +4,7 @@ b f j n             s a s a
 c g k o             m c m c
 d h l p             a o a o
 
-
-ab 6f 6f ab
-82 c5 d4 76
-ab f2 6f fe
-6b c5 d7 c0 
+b5      77      e0      3d
+53      6f      6c      b0
+6b      d3      ed      62
+44      9b      29      c7
