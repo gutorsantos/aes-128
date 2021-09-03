@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include "aes.h"
+#include "file.h"
 
 using namespace std;
 
@@ -133,11 +134,6 @@ void AES_Decrypt(unsigned char * message, unsigned char * key, int rounds) {
 
     unsigned char expanded_key[(rounds+1)*KEYSIZE];
 
-    // to test faster
-    // unsigned char key2[16] = {
-    //     0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c,
-    // };
-
     expand_key(key, expanded_key, (rounds+1)*KEYSIZE);
     
     inverse_initial_round(message, &expanded_key[((rounds+1)*KEYSIZE)-16]);
@@ -146,6 +142,6 @@ void AES_Decrypt(unsigned char * message, unsigned char * key, int rounds) {
     }
     inverse_final_round(message, expanded_key);
     
-    cout << endl << endl << "DECRYPTED MESSAGE" << endl;
-    print_array(message);
+    // cout << endl << endl << "DECRYPTED MESSAGE" << endl;
+    // print_array(message);
 }

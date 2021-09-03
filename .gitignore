@@ -3,3 +3,8 @@
 !*/
 
 .vscode/
+
+assets/*.in
+assets/*.bmp
+!assets/message.in
+!assets/tux.bmp

@@ -14,6 +14,7 @@ The app contains 3 modes:
 g++ -std=c++17 main.cpp -o main
 ./main
 ```
+openssl enc -aes-128-ctr -in tux.bmp -out tux-compare.bmp -K 6162636465666768696a6b6c6d6e6f70 -iv 6162636465666768696a6b6c6d6e6f70 && dd if=tux.bmp of=tux-compare.bmp bs=54 count=1 conv=notrunc
 
 ## Basic Mode
 

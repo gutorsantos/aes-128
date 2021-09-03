@@ -1,28 +1,11 @@
+#ifndef ENCRYT_H_
+#define ENCRYT_H_
+
 #include <iostream>
 #include "aes.h"
 #include "file.h"
 
 using namespace std;
-
-void print_array(unsigned char * m) {
-    // for (int i = 0; i < KEYSIZE; i++) {
-	// 	cout << hex << (int) m[i] << " ";
-	// }
-    // cout << endl;
-
-    for(int i = 0; i < KEYSIZE; i += 4) {
-        unsigned char row[KEYSIZE/4];
-        int mod = 4;
-        for(int j = 0; j < KEYSIZE/4; j++) {
-            row[j] = m[(j*4)+(i/4)];
-            
-		    cout << hex << (int) row[j] << "\t";
-        }  
-
-        cout << endl;
-
-    }
-}
 
 /**
  * This function will do substituition following the table of
@@ -161,16 +144,10 @@ void final_round(unsigned char * state, unsigned char * key) {
  * n-1 main rounds and one final round
  */
 void AES_Encrypt(unsigned char * message, unsigned char * key, int rounds) {
-
+    for(int i = 0; i < 16; i++) {
+        cout << hex << (int) message[i] << " ";
+    }
     unsigned char expanded_key[(rounds+1)*KEYSIZE];
-    
-    // to test faster
-    // unsigned char message2[16] = {
-    //     0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d, 0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34,
-    // };
-    // unsigned char key2[16] = {
-    //     0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c,
-    // };
 
     // Expand key
     expand_key(key, expanded_key, (rounds+1)*KEYSIZE);
@@ -180,9 +157,9 @@ void AES_Encrypt(unsigned char * message, unsigned char * key, int rounds) {
         main_round(message, &expanded_key[16 *(i+1)], i);
     }
     final_round(message, &expanded_key[((rounds+1)*KEYSIZE)-16]);
-    
-    write("encrypted.in", message);
+
 
     cout << endl << endl << "FINAL MESSAGE" << endl;
     print_array(message);
 }
+#endif

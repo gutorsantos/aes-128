@@ -2,6 +2,7 @@
 #define AES_H_
 
 #include <cstring>
+#include <iostream>
 
 #define KEYSIZE 16      // 128 bits => 16 bytes
 
@@ -153,4 +154,22 @@ unsigned char galois_multiplication(unsigned char a, unsigned char b) {
 	}
 	return p;
 }
+
+
+void print_array(unsigned char * m) {
+
+    for(int i = 0; i < KEYSIZE; i += 4) {
+        unsigned char row[KEYSIZE/4];
+        int mod = 4;
+        for(int j = 0; j < KEYSIZE/4; j++) {
+            row[j] = m[(j*4)+(i/4)];
+            
+		    std::cout << std::hex << (int) row[j] << "\t";
+        }  
+
+        std::cout << std::endl;
+
+    }
+}
+
 #endif
