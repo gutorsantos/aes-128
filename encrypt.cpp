@@ -144,9 +144,9 @@ void final_round(unsigned char * state, unsigned char * key) {
  * n-1 main rounds and one final round
  */
 void AES_Encrypt(unsigned char * message, unsigned char * key, int rounds) {
-    for(int i = 0; i < 16; i++) {
-        cout << hex << (int) message[i] << " ";
-    }
+    // for(int i = 0; i < 16; i++) {
+    //     cout << hex << (int) message[i] << " ";
+    // }
     unsigned char expanded_key[(rounds+1)*KEYSIZE];
 
     // Expand key
@@ -159,7 +159,7 @@ void AES_Encrypt(unsigned char * message, unsigned char * key, int rounds) {
     final_round(message, &expanded_key[((rounds+1)*KEYSIZE)-16]);
 
 
-    cout << endl << endl << "FINAL MESSAGE" << endl;
-    print_array(message);
+    // cout << endl << endl << "FINAL MESSAGE" << endl;
+    // print_array(message);
 }
 #endif

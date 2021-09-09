@@ -172,4 +172,20 @@ void print_array(unsigned char * m) {
     }
 }
 
+void byte_array_sum(unsigned char * c, int k, int start) {
+	if(start == 0) {
+        c[start] += k;
+		return;
+	}
+    if(c[start] + k > 0xff) {
+		int l = 0;
+		l = (c[start] + k) >> 8;
+        c[start] += k;
+        byte_array_sum(c, l, start-1);
+		return;
+    }else {
+        c[start] += k;
+        return;
+    }
+}
 #endif

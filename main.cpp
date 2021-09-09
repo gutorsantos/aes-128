@@ -11,6 +11,7 @@ using namespace std;
 
 int input_rounds() {
     int rounds;
+    system("clear");
     cout << "How many rounds? ";
     cin >> rounds;
 
@@ -27,12 +28,12 @@ char select_encrypt_decrypt() {
 }
 
 int is_image() {
-    int opt;
+    char opt = 'y';
     system("clear");
-    cout << "Is file to be encrypted/decrypted a image?" << endl;
+    cout << "Is file to be encrypted/decrypted a image? (Y/n) ";
     cin >> opt;
 
-    return opt;
+    return tolower(opt);
 
 }
 
@@ -77,29 +78,30 @@ void ecb_aes() {
     int file_size = 0;
     int header_size = 0;
     unsigned char * header;
+    string filename;
     if(image) {
-        string filename;
         cout << "Write the filename with extension (OBS: file must be on assests directory): ";
         cin >> filename;
-        file_size = get_file_size("tux.bmp");
-        header_size = get_header_size("tux.bmp");
+        file_size = get_file_size(filename);
+        header_size = get_header_size(filename);
         header = new unsigned char[header_size];
-        get_header("tux.bmp", header, header_size);
+        get_header(filename, header, header_size);
     }else {
         file_size = get_file_size("message.in");
         header_size = 0;
     }
     int data_size = file_size - header_size;
-    unsigned char message[data_size];
+    unsigned char message[file_size];
     
-    if(image) {
-        read_bmp("tux.bmp", message);
+    if(image == 'y') {
+        read_bmp(filename, message);
     }else {
         header = NULL;
         read_file("message.in", message);
     }/**/
 
-    AES_ECB(message, key, rounds, data_size, header, header_size);
+    char e_or_d = select_encrypt_decrypt();
+    AES_ECB(message, key, rounds, file_size, header, header_size, e_or_d);
 }
 
 void ctr_aes() {
@@ -116,29 +118,30 @@ void ctr_aes() {
     int file_size = 0;
     int header_size = 0;
     unsigned char * header;
+    string filename;
     if(image) {
-        string filename;
         cout << "Write the filename with extension (OBS: file must be on assests directory): ";
         cin >> filename;
-        file_size = get_file_size("tux.bmp");
-        header_size = get_header_size("tux.bmp");
+        file_size = get_file_size(filename);
+        header_size = get_header_size(filename);
         header = new unsigned char[header_size];
-        get_header("tux.bmp", header, header_size);
+        get_header(filename, header, header_size);
     }else {
         file_size = get_file_size("message.in");
         header_size = 0;
     }
     int data_size = file_size - header_size;
-    unsigned char message[data_size];
+    unsigned char message[file_size];
     
     if(image) {
-        read_bmp("tux.bmp", message);
+        read_bmp(filename, message);
     }else {
         header = NULL;
         read_file("message.in", message);
     }
 
-    AES_CTR(message, key, rounds, data_size, header, header_size);
+    char e_or_d = select_encrypt_decrypt();
+    AES_CTR(message, key, rounds, file_size, header, header_size, e_or_d);
 
 }
 

@@ -66,12 +66,13 @@ void read_bmp(std::string filename, unsigned char * char_array) {
     int i = 0;
     int start = 0;
     while (file.read((char*) &c, sizeof(char))) {
-        if(i == 10) {
-            start = (int) c;
-        }
-        if(i >= start && i > 10) {
-            char_array[i-start] = c;
-        }
+        char_array[i] = c;
+        // if(i == 10) {
+        //     start = (int) c;
+        // }
+        // if(i >= start && i > 10) {
+        //     char_array[i-start] = c;
+        // }
         i++;
     }
 
@@ -92,6 +93,7 @@ void write(std::string filename, unsigned char * char_array, int size) {
 
 
 void write_bmp(std::string filename, unsigned char * char_array, int size, unsigned char * header, int header_size) {
+
     std::ofstream file;
     file.open(DIR + filename, std::ios::app);
     std::string str;
@@ -99,7 +101,7 @@ void write_bmp(std::string filename, unsigned char * char_array, int size, unsig
     for(int i = 0; i < header_size; i++) {
         str.push_back(header[i]);
     }
-    for(int i = 0; i < size; i++) {
+    for(int i = header_size; i < size; i++) {
         str.push_back(char_array[i]);
     }
     file << str;
