@@ -78,7 +78,20 @@ void read_bmp(std::string filename, unsigned char * char_array) {
 
 }
 
+bool file_exists(std::string filename) {
+    FILE *file;
+    if (file = fopen(filename.c_str(), "r")) {
+        fclose(file);
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 void write(std::string filename, unsigned char * char_array, int size) {
+    if(file_exists(DIR+filename)) {
+        remove((DIR+filename).c_str());
+    }
     std::ofstream file;
     file.open(DIR + filename);
     std::string str;

@@ -5,6 +5,7 @@
 .vscode/
 
 assets/*.in
+assets/*.txt
 assets/*.bmp
 !assets/message.in
 !assets/tux.bmp

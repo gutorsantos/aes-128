@@ -30,7 +30,7 @@ char select_encrypt_decrypt() {
 int is_image() {
     char opt = 'y';
     system("clear");
-    cout << "Is file to be encrypted/decrypted a image? (Y/n) ";
+    cout << "Is file to be encrypted/decrypted a image? (y/n) ";
     cin >> opt;
 
     return tolower(opt);
@@ -40,7 +40,7 @@ int is_image() {
 void basic_aes() {
     int rounds;
 
-    unsigned char message[KEYSIZE];
+    unsigned char message[BLOCKSIZE];
     unsigned char key[KEYSIZE];
 
     // input rounds
@@ -53,11 +53,11 @@ void basic_aes() {
     if(opt == 'e') {
         read_file("message.in", message);       // open the message.in to read the message 
         AES_Encrypt(message, key, rounds);
-        write("basic-aes-128-encrypt.txt", message, KEYSIZE);
+        write("basic-aes-128-encrypt.txt", message, BLOCKSIZE);
     }else if(opt == 'd') {
         read_file("encrypted.in", message);     // open the message.in to read the message 
         AES_Decrypt(message, key, rounds);
-        write("basic-aes-128-decrypt.txt", message, KEYSIZE);
+        write("basic-aes-128-decrypt.txt", message, BLOCKSIZE);
     }else {
         cout << "Invalid option!" << endl;
     }
@@ -70,16 +70,16 @@ void ecb_aes() {
     // input rounds
     rounds = input_rounds();
 
-    int image = is_image();
+    char image = is_image();
 
     unsigned char key[KEYSIZE];
     read_file("secret.key", key);
 
-    int file_size = 0;
+    long long int file_size = 0;
     int header_size = 0;
     unsigned char * header;
     string filename;
-    if(image) {
+    if(image == 'y') {
         cout << "Write the filename with extension (OBS: file must be on assests directory): ";
         cin >> filename;
         file_size = get_file_size(filename);
@@ -91,7 +91,7 @@ void ecb_aes() {
         header_size = 0;
     }
     int data_size = file_size - header_size;
-    unsigned char message[file_size];
+    unsigned char * message = (unsigned char *) malloc(file_size);
     
     if(image == 'y') {
         read_bmp(filename, message);
@@ -99,9 +99,9 @@ void ecb_aes() {
         header = NULL;
         read_file("message.in", message);
     }/**/
-
     char e_or_d = select_encrypt_decrypt();
-    AES_ECB(message, key, rounds, file_size, header, header_size, e_or_d);
+    AES_ECB(message, key, rounds, file_size, header, header_size, e_or_d, filename);
+    free(message);
 }
 
 void ctr_aes() {
@@ -110,7 +110,7 @@ void ctr_aes() {
     // input rounds
     rounds = input_rounds();
 
-    int image = is_image();
+    char image = is_image();
 
     unsigned char key[KEYSIZE];
     read_file("secret.key", key);
@@ -119,7 +119,7 @@ void ctr_aes() {
     int header_size = 0;
     unsigned char * header;
     string filename;
-    if(image) {
+    if(image == 'y') {
         cout << "Write the filename with extension (OBS: file must be on assests directory): ";
         cin >> filename;
         file_size = get_file_size(filename);
@@ -131,9 +131,9 @@ void ctr_aes() {
         header_size = 0;
     }
     int data_size = file_size - header_size;
-    unsigned char message[file_size];
+    unsigned char * message = (unsigned char *) malloc(file_size);
     
-    if(image) {
+    if(image == 'y') {
         read_bmp(filename, message);
     }else {
         header = NULL;
@@ -141,7 +141,8 @@ void ctr_aes() {
     }
 
     char e_or_d = select_encrypt_decrypt();
-    AES_CTR(message, key, rounds, file_size, header, header_size, e_or_d);
+    AES_CTR(message, key, rounds, file_size, header, header_size, e_or_d, filename);
+    free(message);
 
 }
 
@@ -154,15 +155,16 @@ int main() {
 
     do {
         cout << "Choose an option:" << endl;
-        cout << "0 - Basic Encrypt/Decrypt " << endl;
+        // cout << "0 - Basic Encrypt/Decrypt " << endl;
         cout << "1 - ECB mode" << endl;
         cout << "2 - CTR mode" << endl;        
         cin >> opt;
 
         switch(opt) {
             case 0:
-                basic_aes();
-                break;
+                return 0;
+                // basic_aes();
+                // break;
             case 1:
                 ecb_aes();
                 break;

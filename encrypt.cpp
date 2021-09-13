@@ -86,7 +86,7 @@ void galois_mix_column(unsigned char * col) {
  */
 void mix_columns(unsigned char * state) {
 
-    for(int i = 0; i < KEYSIZE; i += 4) { // Starts on 4 because there's no need to shift the first row
+    for(int i = 0; i < KEYSIZE; i += 4) { 
         unsigned char col[KEYSIZE/4];
         int mod = 4;
         for(int j = 0; j < KEYSIZE/4; j++) {

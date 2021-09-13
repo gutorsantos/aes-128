@@ -22,15 +22,15 @@ void inverse_sub_bytes(unsigned char * state, int len) {
  * on encryption.
  */
 void inverse_shift_rows(unsigned char * state) {
-    for(int i = 0; i < KEYSIZE; i += 4) {
-        unsigned char row[KEYSIZE/4];
+    for(int i = 0; i < BLOCKSIZE; i += 4) {
+        unsigned char row[BLOCKSIZE/4];
         int mod = 4;
-        for(int j = 0; j < KEYSIZE/4; j++) {
+        for(int j = 0; j < BLOCKSIZE/4; j++) {
             row[j] = state[(j*4)+(i/4)];        // Get the row
 
         }
-        for(int j = 0; j < KEYSIZE/4; j++) {
-            int shift_index = (( ((j*4)+(i/4)+(i)) % KEYSIZE) + KEYSIZE) % KEYSIZE;
+        for(int j = 0; j < BLOCKSIZE/4; j++) {
+            int shift_index = (( ((j*4)+(i/4)+(i)) % BLOCKSIZE) + BLOCKSIZE) % BLOCKSIZE;
             state[shift_index] = row[j];
         }
 
@@ -68,14 +68,14 @@ void inverse_galois_mix_columns(unsigned char * col) {
  */
 void inverse_mix_columns(unsigned char * state) {
 
-    for(int i = 0; i < KEYSIZE; i += 4) {
-        unsigned char col[KEYSIZE/4];
+    for(int i = 0; i < BLOCKSIZE; i += 4) {
+        unsigned char col[BLOCKSIZE/4];
         int mod = 4;
-        for(int j = 0; j < KEYSIZE/4; j++) {
+        for(int j = 0; j < BLOCKSIZE/4; j++) {
             col[j] = state[j+i];
         }
         inverse_galois_mix_columns(col);
-        for(int j = 0; j < KEYSIZE/4; j++) {
+        for(int j = 0; j < BLOCKSIZE/4; j++) {
             state[j+i] = col[j];
         }
 
@@ -87,7 +87,7 @@ void inverse_mix_columns(unsigned char * state) {
  * key. The inverse operation of XOR is XOR itself. 
  */
 void inverse_add_round_key(unsigned char * state, unsigned char * key) {
-    for (int i = 0; i < KEYSIZE; i++) {
+    for (int i = 0; i < BLOCKSIZE; i++) {
 		state[i] ^= key[i];
 	}
 }
@@ -99,7 +99,7 @@ void inverse_add_round_key(unsigned char * state, unsigned char * key) {
 void inverse_initial_round(unsigned char * state, unsigned char * key) {
     inverse_add_round_key(state, key);
     inverse_shift_rows(state);
-    inverse_sub_bytes(state, KEYSIZE);
+    inverse_sub_bytes(state, BLOCKSIZE);
 }
 
 /**
@@ -110,7 +110,7 @@ void inverse_main_round(unsigned char * state, unsigned char * key, int i) {
     inverse_add_round_key(state, key);
     inverse_mix_columns(state);
     inverse_shift_rows(state);
-    inverse_sub_bytes(state, KEYSIZE);
+    inverse_sub_bytes(state, BLOCKSIZE);
 }
 
 /**
@@ -132,11 +132,11 @@ void inverse_final_round(unsigned char * state, unsigned char * key) {
  */
 void AES_Decrypt(unsigned char * message, unsigned char * key, int rounds) {
 
-    unsigned char expanded_key[(rounds+1)*KEYSIZE];
+    unsigned char expanded_key[(rounds+1)*BLOCKSIZE];
 
-    expand_key(key, expanded_key, (rounds+1)*KEYSIZE);
+    expand_key(key, expanded_key, (rounds+1)*BLOCKSIZE);
     
-    inverse_initial_round(message, &expanded_key[((rounds+1)*KEYSIZE)-16]);
+    inverse_initial_round(message, &expanded_key[((rounds+1)*BLOCKSIZE)-16]);
     for(int i = rounds-1; i > 0; i--) {
         inverse_main_round(message, &expanded_key[16 *(i)], i);
     }
